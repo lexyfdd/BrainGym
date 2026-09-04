@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { Brain, Target, Coins, Shield, Sparkles, TrendingUp, Database, CheckCircle2 } from 'lucide-react';
+import { Brain, Target, Coins, TrendingUp, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { isSupabaseConfigured, initSupabase, clearSupabaseConfig } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
+import heroVisual from '../assets/images/braingym_hero_visual_1788532388898.jpg';
 
 export function Home() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const configured = isSupabaseConfigured();
   
   // If user is already logged in, they should usually see their dashboard.
   useEffect(() => {
@@ -18,17 +17,6 @@ export function Home() {
       navigate('/dashboard');
     }
   }, [user, navigate]);
-
-  const [showConfig, setShowConfig] = useState(false);
-  const [dbUrl, setDbUrl] = useState('');
-  const [dbKey, setDbKey] = useState('');
-
-  const handleConnect = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (initSupabase(dbUrl, dbKey)) {
-      window.location.reload();
-    }
-  };
 
   const handleStart = () => {
     if (user) {
@@ -40,71 +28,13 @@ export function Home() {
 
   return (
     <div className="space-y-20">
-      {/* Configuration Warning for Prototype */}
-      {!configured ? (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-xl">
-          <div className="flex items-start gap-4">
-            <Shield className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-amber-900 text-lg">Prototype Mode Active</h3>
-              <p className="text-sm mt-1 mb-3">
-                You are currently running with local offline state. Connect your Supabase project to persist data and enable real authentication.
-              </p>
-              {!showConfig ? (
-                <Button size="sm" variant="accent" onClick={() => setShowConfig(true)}>
-                  <Database className="w-4 h-4 mr-2" /> Connect Supabase
-                </Button>
-              ) : (
-                <form onSubmit={handleConnect} className="bg-white p-4 rounded-lg border border-amber-100 space-y-4 max-w-xl">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project URL</label>
-                    <input 
-                      type="url" 
-                      required 
-                      value={dbUrl}
-                      onChange={e => setDbUrl(e.target.value)}
-                      placeholder="https://your-project.supabase.co" 
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Anon Public Key</label>
-                    <input 
-                      type="password" 
-                      required 
-                      value={dbKey}
-                      onChange={e => setDbKey(e.target.value)}
-                      placeholder="eyJhbG..." 
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" size="sm" variant="primary">Connect Database</Button>
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setShowConfig(false)}>Cancel</Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-6 h-6 text-green-500" />
-            <span className="font-semibold">Connected to Supabase Database</span>
-          </div>
-          <Button size="sm" variant="ghost" onClick={clearSupabaseConfig} className="text-green-700 hover:bg-green-100">
-            Disconnect
-          </Button>
-        </div>
-      )}
-
       {/* Hero Section */}
-      <section className="text-center max-w-4xl mx-auto pt-8">
+      <section className="text-center max-w-5xl mx-auto pt-8">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
+          className="flex flex-col items-center"
         >
           <motion.div 
             animate={{ y: [0, -10, 0] }}
@@ -131,7 +61,7 @@ export function Home() {
             BRAINGYM helps children, teens, students and adults strengthen logical thinking, critical thinking, financial skills and real-life problem solving through adaptive challenges.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button size="xl" onClick={handleStart} className="bg-yellow-400 text-red-900 hover:bg-yellow-300 shadow-xl shadow-yellow-500/30 font-bold border-none">
                 START TRAINING
@@ -143,6 +73,15 @@ export function Home() {
               </Button>
             </motion.div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl shadow-red-900/40 border border-white/20 relative"
+          >
+            <img src={heroVisual} alt="BrainGym visual concept" className="w-full h-auto object-cover max-h-[500px]" />
+          </motion.div>
         </motion.div>
       </section>
 
